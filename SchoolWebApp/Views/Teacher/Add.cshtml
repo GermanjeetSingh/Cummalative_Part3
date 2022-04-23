@@ -1,0 +1,100 @@
+﻿@{
+    ViewData["Title"] = "Add Teacher";
+}
+
+
+<div class="form-group">
+    <label for="teacherfname">Firstname</label>
+    <input type="text" class="form-control" id="teacherfname" name="teacherfname" placeholder="Enter Firstname">
+</div>
+
+<div class="form-group">
+    <label for="teacherfname">Lastname</label>
+    <input type="text" class="form-control" id="teacherlname" name="teacherlname" placeholder="Enter Lastname">
+</div>
+
+<div class="form-group">
+    <label for="employeenumber">Employee Number</label>
+    <input type="text" class="form-control" id="employeenumber" name="employeenumber" placeholder="Enter employee number">
+</div>
+
+<div class="form-group">
+    <label for="hiredate">Hire Date</label>
+    <input type="date" class="form-control" id="hiredate" name="hiredate" placeholder="Select hiredate">
+</div>
+
+<div class="form-group">
+    <label for="salary">Salary</label>
+    <input type="text" class="form-control" id="salary" name="salary" placeholder="Enter Salary">
+</div>
+
+
+<button type="button" class="btn btn-primary" id="add_teacher_bt">Submit</button>
+
+<script type="text/javascript">
+
+    function showAlert(isError, title ,msg) {
+        Swal.fire({
+            title: title,
+            text: msg,
+            icon: isError ? 'error' : 'success'
+        });
+    }
+
+    document.getElementById('add_teacher_bt').addEventListener('click', () => {
+        const firstname = document.getElementById("teacherfname").value;
+        if (firstname == "") {
+            showAlert(true, "Oops", "Please enter a First Name");
+            return;
+        }
+        const lastname = document.getElementById("teacherlname").value;
+        if (lastname == "") {
+            showAlert(true, "Oops", "Please enter a Last Name");
+            return;
+        }
+        const employee = document.getElementById("employeenumber").value;
+        if (employee == "") {
+            showAlert(true, "Oops", "Please enter a employee number");
+            return;
+        }
+        const hiredate = document.getElementById("hiredate").value;
+        if (hiredate == "") {
+            showAlert(true, "Oops", "Please select a hiring date");
+            return;
+        }
+        const salary = document.getElementById("salary").value;
+        if (salary == "" || isNaN(salary)) {
+            showAlert(true, "Oops", "Please enter a valid salary amount");
+            return;
+        }
+        
+        var http = new XMLHttpRequest();
+        const payload = {
+            "id": 0,
+            "teacherfname": firstname,
+            "teacherlname": lastname,
+            "employeenumber": employee,
+            "hiredate": hiredate,
+            "salary": parseFloat(salary)
+        };
+        http.open('POST', "http://localhost:5001/api/TeacherData", true);
+        http.setRequestHeader('Content-type', 'application/json');
+        http.onreadystatechange = function () {
+            if (http.readyState == 4) {
+                if (http.status == 200) {
+                    showAlert(false, "Congrats", "Teacher added successfully");
+                    document.getElementById("teacherfname").value = "";
+                    document.getElementById("teacherlname").value = "";
+                    document.getElementById("employeenumber").value = "";
+                    document.getElementById("hiredate").value = "";
+                    document.getElementById("salary").value = "";
+                }
+                else
+                    showAlert(true, "Oops", http.responseText);
+            }
+        }
+        http.send(JSON.stringify(payload));
+    });
+
+
+</script>
